@@ -1,3 +1,7 @@
 const BOMB = 9
 
-export { BOMB }
+const FLAG = 2
+
+const EMPTY = 1
+
+export { BOMB, FLAG, EMPTY }

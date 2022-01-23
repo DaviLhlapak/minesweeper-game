@@ -1,4 +1,4 @@
-import { BOMB } from 'src/constants/config'
+import { BOMB, EMPTY, FLAG } from 'src/constants/config'
 import { GameImages } from 'src/images/game'
 
 interface IGame {
@@ -8,6 +8,7 @@ interface IGame {
 interface IState {
     bombs: number
     field: Array<Array<number>>
+    overField: Array<Array<number>>
 }
 
 const createGame = (
@@ -17,6 +18,7 @@ const createGame = (
     const state: IState = {
         bombs: 50,
         field: [],
+        overField: [],
     }
 
     const renderObjects = () => {
@@ -26,12 +28,45 @@ const createGame = (
                     const image = new Image()
                     image.src = 'assets/bomb.png'
 
-                    drawer.drawImage(image, columnIndex * 10, lineIndex * 10)
+                    drawer.drawImage(
+                        image,
+                        columnIndex * 10 + columnIndex,
+                        lineIndex * 10 + lineIndex,
+                    )
                 } else {
-                    const image = new Image()
-                    image.src = GameImages[column]
+                    if (GameImages[column] !== '') {
+                        const image = new Image()
+                        image.src = GameImages[column]
 
-                    drawer.drawImage(image, columnIndex * 10, lineIndex * 10)
+                        drawer.drawImage(
+                            image,
+                            columnIndex * 10 + columnIndex,
+                            lineIndex * 10 + lineIndex,
+                        )
+                    }
+                }
+            })
+        })
+
+        state.overField.forEach((line, lineIndex) => {
+            line.forEach((column, columnIndex) => {
+                if (column === FLAG) {
+                    const image = new Image()
+                    image.src = 'assets/mark.png'
+
+                    drawer.drawImage(
+                        image,
+                        columnIndex * 10 + columnIndex,
+                        lineIndex * 10 + lineIndex,
+                    )
+                } else if (column !== EMPTY) {
+                    drawer.fillStyle = '#6b7280'
+                    drawer.fillRect(
+                        columnIndex * 10 + columnIndex,
+                        lineIndex * 10 + lineIndex,
+                        10,
+                        10,
+                    )
                 }
             })
         })
@@ -67,6 +102,20 @@ const createGame = (
         }
 
         state.field = field
+    }
+
+    const fillOverField = () => {
+        const field: Array<Array<number>> = []
+
+        for (let line = 0; line < 10; line++) {
+            field[line] = []
+
+            for (let column = 0; column < 10; column++) {
+                field[line][column] = 0
+            }
+        }
+
+        state.overField = field
     }
 
     const fillWithNumber = () => {
@@ -125,6 +174,8 @@ const createGame = (
         fillWithBombs()
 
         fillWithNumber()
+
+        fillOverField()
 
         renderScreen()
     }

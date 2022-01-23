@@ -29,8 +29,8 @@ const Home: NextPage = () => {
             </header>
 
             <canvas
-                width={100}
-                height={100}
+                width={109}
+                height={109}
                 className="w-96 h-96 screen"
                 ref={canvasRef}
             />
